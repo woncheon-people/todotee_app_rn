@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useState} from 'react';
 import {Button, TextInput, View} from 'react-native';
 
 interface AddTodoInputMoleculeProps {
@@ -12,9 +12,10 @@ export function AddTodoInputMolecule({onPressed}: AddTodoInputMoleculeProps) {
     <View style={{flexDirection: 'row'}}>
       <TextInput
         style={{
-          borderBottomColor: 'black',
-          borderBottomWidth: 1,
+          borderBottomColor: 'steelblue',
+          borderBottomWidth: 2,
           flexGrow: 1,
+          fontSize: 16,
         }}
         value={contents}
         onChangeText={contents => setContents(contents)}
@@ -25,6 +26,7 @@ export function AddTodoInputMolecule({onPressed}: AddTodoInputMoleculeProps) {
           onPressed(contents);
           setContents('');
         }}
+        color="steelblue"
       />
     </View>
   );

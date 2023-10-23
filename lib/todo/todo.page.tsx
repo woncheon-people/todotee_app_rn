@@ -1,63 +1,50 @@
-import React, {useEffect, useState} from 'react';
-import {SafeAreaView, Text, View, ViewStyle} from 'react-native';
+import React from 'react';
+import {SafeAreaView, ScrollView, Text, View, ViewStyle} from 'react-native';
 import {TodoItemAtom} from './components/todo-item.atom';
-import {Todo} from '../domain/todo';
 import {AddTodoInputMolecule} from './components/add-todo-input.molecule';
-
-let sequence = 2;
-
-interface TodoPageState {
-  todos: Todo[];
-}
+// import {DependencyContext} from '../App';
+import {useDispatch, useSelector} from 'react-redux';
+import {RootState} from '../store';
+import {addTodo, changeStatus, deleteTodo} from './slices/todos-slice';
 
 export function TodoPage() {
-  const [state, setState] = useState<TodoPageState>({
-    todos: [
-      
-    ],
-  });
+  // const {todoApi} = useContext(DependencyContext);
+
+  const todos = useSelector((state: RootState) => state.todos);
+  const dispatch = useDispatch();
 
   const viewStyle: ViewStyle = {
     paddingHorizontal: 20,
   };
 
-  useEffect(() => {
-    console.log(state);
-  }, [state]);
-
   return (
     <SafeAreaView>
       <View style={viewStyle}>
-        <Text style={{fontSize: 32, fontWeight: '700'}}>TODOTEE</Text>
-        <View style={{height: 10}}></View>
-        <AddTodoInputMolecule
-          onPressed={contents => {
-            const newState = {todos: [...state.todos]};
-            newState.todos.push({
-              id: ++sequence,
-              contents,
-              checked: false,
-            });
-            setState(newState);
-          }}
-        />
-        {state.todos.map((todo, index) => (
-          <TodoItemAtom
-            key={`todo-item-${index}`}
-            value={todo.checked}
-            contents={todo.contents}
-            onChanged={status => {
-              const newState = {todos: [...state.todos]};
-              newState.todos[index].checked = status;
-              setState(newState);
-            }}
-            onDelete={() => {
-              const newState = {todos: [...state.todos]};
-              newState.todos.splice(index, 1);
-              setState(newState);
+        <View style={{height: '20%', justifyContent: 'center'}}>
+          <Text style={{fontSize: 32, fontWeight: '700'}}>TODOTEE</Text>
+          <View style={{height: 10}}></View>
+          <AddTodoInputMolecule
+            onPressed={contents => {
+              dispatch(addTodo(contents));
             }}
           />
-        ))}
+        </View>
+
+        <ScrollView style={{height: '80%'}}>
+          {todos.map((todo, index) => (
+            <TodoItemAtom
+              key={`todo-item-${index}`}
+              value={todo.checked}
+              contents={todo.contents}
+              onChanged={status => {
+                dispatch(changeStatus({index, status}));
+              }}
+              onDelete={() => {
+                dispatch(deleteTodo(index));
+              }}
+            />
+          ))}
+        </ScrollView>
       </View>
     </SafeAreaView>
   );
